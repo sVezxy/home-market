@@ -1,0 +1,11 @@
+.env
+docker-compose.yml
+node_modules/
+prisma/
+skills-lock.json
+
+/src/generated/prisma
+
+/src/generated/prisma
+
+/src/generated/prisma
