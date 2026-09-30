@@ -1,12 +1,15 @@
-import express, { type Express, type Request, type Response } from 'express';
+import express, { Router } from 'express'
+import userRouter from './routers/userRouter';
+import 'dotenv/config';
 
-const app: Express = express();
-const port = 3000;
+const app = express();
 
-app.get('/health', (req: Request, res: Response) => {
-  res.status(200).json({status: "ok"});
-});
+app.use(express.json());
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+app.use("/user", userRouter);
+
+
+
+app.listen(3000, () =>{
+    console.log("Сервер запущено на 3000 порті");
 });
