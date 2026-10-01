@@ -9,7 +9,7 @@ export const zodValidation = (schema: ZodType): RequestHandler => {
         if(!validateZod.success){
             return res.status(400).json({
                 message: "Validation failed",
-                error: flattenError(validateZod.error).fieldErrors
+                error: flattenError(validateZod.error)
             });
         }
 

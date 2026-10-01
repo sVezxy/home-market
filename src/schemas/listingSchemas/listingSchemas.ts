@@ -67,6 +67,9 @@ export const listingSchema = z.strictObject({
     message: "Invalid gender option. Allowed values: ANY, ONLY_MALE, ONLY_FEMALE",
   }),
 
+  area: z.int()
+  .max(1000),
+
   photos: z.array(photoUrlSchema)
     .max(10, "Maximum of 10 photos allowed")
     .refine((urls) => new Set(urls).size === urls.length, {
