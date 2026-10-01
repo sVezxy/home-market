@@ -1,4 +1,6 @@
-import { rateLimit, ipKeyGenerator } from "express-rate-limit";
+import { rateLimit } from "express-rate-limit";
+import { Request } from "express";
+
 export const registerLimit = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 5,
@@ -17,6 +19,6 @@ export const loginLimit = rateLimit({
     legacyHeaders: false,
     message: {error: "Too many unsuccessful login tries, try again shortly"},
     skipSuccessfulRequests: true,
-    keyGenerator: (req) => String(req.body?.email ?? '').toLowerCase().trim() || req.ip || "unknown",
+    keyGenerator: (req: Request) => String(req.body?.email ?? '').toLowerCase().trim() || "unknown",
     skip: (req) => req.ip === '127.0.0.1'
 })

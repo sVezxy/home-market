@@ -1,5 +1,6 @@
 import express, { Router } from 'express'
 import userRouter from './routers/userRouter';
+import listingRouter from './routers/listingRouter';
 import 'dotenv/config';
 
 const app = express();
@@ -7,6 +8,7 @@ const app = express();
 app.use(express.json({limit: "10kb"}));
 
 app.use("/user", userRouter);
+app.use("/listing", listingRouter);
 
 
 
