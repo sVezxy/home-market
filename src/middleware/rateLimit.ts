@@ -17,6 +17,6 @@ export const loginLimit = rateLimit({
     legacyHeaders: false,
     message: {error: "Too many unsuccessful login tries, try again shortly"},
     skipSuccessfulRequests: true,
-    keyGenerator: (req) => String(req.body?.email ?? '').toLowerCase().trim() || ipKeyGenerator(req.ip) || "unknown",
+    keyGenerator: (req) => String(req.body?.email ?? '').toLowerCase().trim() || req.ip || "unknown",
     skip: (req) => req.ip === '127.0.0.1'
 })

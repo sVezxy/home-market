@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { constantCatch } from 'zod/v4/core/util.cjs';
 
 const photoUrlSchema = z
   .string()
@@ -89,4 +90,18 @@ export const listingSchema = z.strictObject({
       path: ["depositAmount"],
     });
   }
+});
+
+export const ListingsQuerySchema = z.object({
+  page: z.coerce.number().int()
+  .min(1)
+  .default(1),
+  limit: z.coerce.number().int()
+  .min(1)
+  .max(50)
+  .default(10)
+});
+
+export const ListingsParamSchema = z.strictObject({
+  id: z.string().uuid("Invalid uuid")
 });
