@@ -6,7 +6,7 @@ export const getListing = async (req: Request<{ id: string }>, res: Response) =>
     try{
         const {id} = req.params;
         const listing = await prisma.listing.findUnique({
-            where: {id},
+            where: {id: id},
             include:{
                 Category: true,
                 User:{
@@ -22,6 +22,9 @@ export const getListing = async (req: Request<{ id: string }>, res: Response) =>
 
         if(!listing){
             return res.status(404).json({error: "Requested listing is not found"})
+        }
+        if(listing.status !== "ACTIVE"){
+            return res.status(404).json({ error: http.STATUS_CODES[404]});
         }
 
         return res.status(200).json({listing})

@@ -108,3 +108,18 @@ export const ListingsQuerySchema = z.object({
 export const listingsParamSchema = z.object({
   id: z.string().uuid("Invalid uuid")
 });
+
+export const updateListingSchema = z.object({
+  name: z.string().trim().min(5).max(100).optional(),
+  description: z.string().trim().min(20).max(500).optional(),
+  price: z.number().int().positive().max(1000000).optional(),
+  street: z.string().trim().min(2).max(100).optional(),
+  streetNumber: z.string().trim().min(1).max(20).optional(),
+  amenities: z.array(z.string()).optional(),
+  isShared: z.boolean().optional(),
+  countPeople: z.number().int().min(1).max(15).optional(),
+  countRoom: z.number().int().min(1).max(10).optional(),
+  allowedGender: z.enum(["ANY", "ONLY_MALE", "ONLY_FEMALE"]).optional(),
+  area: z.number().max(1000).optional(),
+  photos: z.array(z.string().url()).optional()
+});

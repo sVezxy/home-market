@@ -12,14 +12,12 @@ export const zodValidation = (schema: ZodType, source: "body"| "query" | "params
                 error: flattenError(validateZod.error)
             });
         }
-        /*
-        Object.defineProperty(req, source, {
-            value: validateZod.data,
-            writable: true,
-            enumerable: true,
-            configurable: true
-        });
-        */
+        if (source === "body") {
+            req.body = validateZod.data;
+        } else {
+            Object.keys(req[source]).forEach(key => delete req[source][key]);
+            Object.assign(req[source], validateZod.data);
+        }
         next();
     }
 }
