@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json({limit: "10kb"}));
 
 app.use("/user", userRouter);
-app.use("/listing", listingRouter);
+app.use("/listings", listingRouter);
 
 
 

@@ -105,6 +105,6 @@ export const ListingsQuerySchema = z.object({
   .default(10)
 });
 
-export const ListingsParamSchema = z.strictObject({
+export const listingsParamSchema = z.object({
   id: z.string().uuid("Invalid uuid")
 });

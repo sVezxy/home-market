@@ -7,6 +7,8 @@ import { loginScheme } from "../schemas/userSchemas/loginSchemas";
 import { loginController } from  "../controllers/userControllers/loginController";
 import { authMiddleware } from "../middleware/authMiddleware";
 
+
+
 const userRouter = Router();
 
 userRouter.post("/register", registerLimit , zodValidation(regSchema), regController);

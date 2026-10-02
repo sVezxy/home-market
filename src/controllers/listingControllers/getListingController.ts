@@ -2,38 +2,31 @@ import { Request, Response } from "express";
 import http from 'http'
 import { prisma } from "../../prisma";
 
-export const getListings = async (req: Request, res: Response) =>{
+export const getListing = async (req: Request<{ id: string }>, res: Response) =>{
     try{
-        const { page, limit} = req.query as unknown as {page: number, limit: number};
-        const skip = (page - 1) * limit;
-        const take = limit;
-
-        const[data,total] = await Promise.all([
-            prisma.listing.findMany({
-                where: {status: "ACTIVE"},
-                skip: skip,
-                take: limit,
-                orderBy: {createdAt: "desc"},
-                include:{
-                    Category: true,
-                    User: {select:{
-                        id:true, name:true, email:true,
-                    }}
+        const {id} = req.params;
+        const listing = await prisma.listing.findUnique({
+            where: {id},
+            include:{
+                Category: true,
+                User:{
+                    select:{
+                        id: true,
+                        name: true,
+                        phone: true,
+                        telegramUsername: true,
+                    }
                 }
-            }),
-            prisma.listing.count({where: {status: "ACTIVE"}})
-        ]);
-
-        const totalPages = Math.ceil(total / limit);
-
-        return res.status(200).json({
-            data,
-            meta: {
-                page,limit,total,totalPages
             }
-        })
+        });
+
+        if(!listing){
+            return res.status(404).json({error: "Requested listing is not found"})
+        }
+
+        return res.status(200).json({listing})
     }catch(error){
         console.log(error);
-        return res.status(500).json({message: "Internal sever error"});
+        return res.status(500).json({error: http.STATUS_CODES[500]});
     }
 }
