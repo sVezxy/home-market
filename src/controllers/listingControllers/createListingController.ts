@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import http from 'http'
 import { prisma } from "../../prisma";
-import { error } from "console";
 
 
 export const createListings = async (req: Request, res: Response) => {
