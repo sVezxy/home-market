@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction, RequestHandler } from "express";
 import { flattenError, ZodType } from "zod";
 
-export const zodValidation = (schema: ZodType): RequestHandler => {
+export const zodValidation = (schema: ZodType, source: "body"| "query" | "params" = "body"): RequestHandler => {
     return (req: Request, res: Response, next: NextFunction) => {
         console.log('Крок 1: Мідлвар');
-        const validateZod = schema.safeParse(req.body);
+        const validateZod = schema.safeParse(req[source]);
 
         if(!validateZod.success){
             return res.status(400).json({
@@ -12,8 +12,12 @@ export const zodValidation = (schema: ZodType): RequestHandler => {
                 error: flattenError(validateZod.error)
             });
         }
-
-        req.body = validateZod.data
+        if (source === "body") {
+            req.body = validateZod.data;
+        } else {
+            Object.keys(req[source]).forEach(key => delete req[source][key]);
+            Object.assign(req[source], validateZod.data);
+        }
         next();
     }
 }
