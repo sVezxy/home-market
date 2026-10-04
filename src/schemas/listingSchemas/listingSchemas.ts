@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { uuid, z } from 'zod';
 import { constantCatch } from 'zod/v4/core/util.cjs';
 
 const photoUrlSchema = z
@@ -102,11 +102,15 @@ export const ListingsQuerySchema = z.object({
   limit: z.coerce.number().int()
   .min(1)
   .max(50)
-  .default(10)
+  .default(10),
+  search: z.string().optional(),
+  categoryId: z.string().uuid().optional(),
+  minPrice: z.coerce.number().nonnegative().optional(),
+  maxPrice: z.coerce.number().positive().optional()
 });
 
 export const listingsParamSchema = z.object({
-  id: z.string().uuid("Invalid uuid")
+  id: z.string().uuid("Invalid uuid"),
 });
 
 export const updateListingSchema = z.object({
