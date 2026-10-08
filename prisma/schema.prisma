@@ -54,15 +54,21 @@ model Listing {
   price         Int
   deposit       Boolean
   depositAmount Int?
+
+  latitude   Float @db.DoublePrecision
+  longitude  Float @db.DoublePrecision
+
   street        String    @db.VarChar(100)
   streetNumber  String    @db.VarChar(20)
   amenities     String[]
+
   isShared      Boolean
   countPeople   Int
   countRoom     Int
   allowedGender Gender
   area          Int
   photos        String[]
+
   status        Status    @default(PENDING)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @default(now())

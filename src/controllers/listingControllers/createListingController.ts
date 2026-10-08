@@ -25,6 +25,13 @@ export const createListings = async (req: Request, res: Response) => {
             data: {
                 ...req.body,
                 ownerId: authorId
+            },
+            include: {
+                Category: {
+                    select: {
+                        typeCategory: true
+                    }
+                },
             }
         });
         return res.status(201).json(newListing);
