@@ -13,6 +13,13 @@ const photoUrlSchema = z
     }
   }, { message: "Photo URL must use HTTPS protocol" });
 
+const coordinatesSchema = (name: string, limit: number) => {
+  return z
+    .number()
+    .min(-limit, `${name} must be between -${limit} and ${limit}`)
+    .max(limit, `${name} must be between -${limit} and ${limit}`)
+}
+
 export const listingSchema = z.strictObject({
   categoryId: z.string().uuid("Invalid category ID format"),
 
@@ -37,6 +44,10 @@ export const listingSchema = z.strictObject({
     .max(1000000, "Deposit amount exceeds the maximum allowed value")
     .optional()
     .nullable(),
+
+  latitude: coordinatesSchema("Latitude", 90),
+
+  longitude: coordinatesSchema("Longitude", 180),
 
   street: z.string()
     .trim()
@@ -68,7 +79,8 @@ export const listingSchema = z.strictObject({
     message: "Invalid gender option. Allowed values: ANY, ONLY_MALE, ONLY_FEMALE",
   }),
 
-  area: z.int()
+  area: z.number()
+  .int("Must be an integer")
   .max(1000),
 
   photos: z.array(photoUrlSchema)

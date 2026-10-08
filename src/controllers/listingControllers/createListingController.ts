@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import http from 'http'
 import { prisma } from "../../prisma";
-import { error } from "console";
 
 
 export const createListings = async (req: Request, res: Response) => {
@@ -26,6 +25,13 @@ export const createListings = async (req: Request, res: Response) => {
             data: {
                 ...req.body,
                 ownerId: authorId
+            },
+            include: {
+                Category: {
+                    select: {
+                        typeCategory: true
+                    }
+                },
             }
         });
         return res.status(201).json(newListing);

@@ -28,8 +28,8 @@ export const regController = async (req: Request, res: Response) => {
         return res.status(201).json(newUser);
     }catch(error){
         if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-            const field = (error.meta?.target as string[])?.[0] ?? 'поле';
-            return res.status(409).json({ error: `Користувач з таким ${field} вже існує` });
+            const field = (error.meta?.target as string[])?.[0] ?? 'field';
+            return res.status(409).json({ error: `User with that ${field} exists` });
          }
 
         console.log(error);
