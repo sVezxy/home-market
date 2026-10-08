@@ -10,6 +10,8 @@ import { getProfile } from "../controllers/userControllers/getProfile";
 import { idParamsSchema } from "../schemas/userSchemas/userSchema";
 import { getProfileById } from "../controllers/userControllers/getProfileById";
 
+
+
 const userRouter = Router();
 
 userRouter.post("/register", registerLimit , zodValidation(regSchema), regController);

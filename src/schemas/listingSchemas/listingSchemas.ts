@@ -1,4 +1,5 @@
-import { z } from 'zod';
+import { uuid, z } from 'zod';
+import { constantCatch } from 'zod/v4/core/util.cjs';
 
 const photoUrlSchema = z
   .string()
@@ -104,4 +105,37 @@ export const listingSchema = z.strictObject({
       path: ["depositAmount"],
     });
   }
+});
+
+export const ListingsQuerySchema = z.object({
+  page: z.coerce.number().int()
+  .min(1)
+  .default(1),
+  limit: z.coerce.number().int()
+  .min(1)
+  .max(50)
+  .default(10),
+  search: z.string().optional(),
+  categoryId: z.string().uuid().optional(),
+  minPrice: z.coerce.number().nonnegative().optional(),
+  maxPrice: z.coerce.number().positive().optional()
+});
+
+export const listingsParamSchema = z.object({
+  id: z.string().uuid("Invalid uuid"),
+});
+
+export const updateListingSchema = z.object({
+  name: z.string().trim().min(5).max(100).optional(),
+  description: z.string().trim().min(20).max(500).optional(),
+  price: z.number().int().positive().max(1000000).optional(),
+  street: z.string().trim().min(2).max(100).optional(),
+  streetNumber: z.string().trim().min(1).max(20).optional(),
+  amenities: z.array(z.string()).optional(),
+  isShared: z.boolean().optional(),
+  countPeople: z.number().int().min(1).max(15).optional(),
+  countRoom: z.number().int().min(1).max(10).optional(),
+  allowedGender: z.enum(["ANY", "ONLY_MALE", "ONLY_FEMALE"]).optional(),
+  area: z.number().max(1000).optional(),
+  photos: z.array(z.string().url()).optional()
 });

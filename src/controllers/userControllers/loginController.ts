@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { prisma } from "../../prisma";
+import http from 'http'
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -31,6 +32,6 @@ export const loginController = async (req: Request, res: Response) => {
         return res.status(200).json({AccessToken, user: {userId: user.id, email: user.email, name: user.name, role: user.role}});
     }catch(error){
         console.log(error);
-        return res.status(500).json({ error: "Internal server error" });
+        return res.status(500).json({ error: http.STATUS_CODES[500]});
     }
 }
