@@ -14,9 +14,11 @@ export const zodValidation = (schema: ZodType, source: "body"| "query" | "params
         }
         if (source === "body") {
             req.body = validateZod.data;
-        } else {
-            Object.keys(req[source]).forEach(key => delete req[source][key]);
-            Object.assign(req[source], validateZod.data);
+        }else if(source === "query"){
+            req.validateQuery = validateZod.data;
+        }
+        else {
+            req.params = validateZod.data as any;
         }
         next();
     }

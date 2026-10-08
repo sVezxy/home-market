@@ -1,12 +1,12 @@
-import { rateLimit } from "express-rate-limit";
+import { rateLimit, ipKeyGenerator } from "express-rate-limit";
 import { Request } from "express";
 
 export const registerLimit = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 5,
+    max: 10,
     standardHeaders: true,
     legacyHeaders: false,
-    message: {error: "Too many registration tries, try after 15 minut limit"},
+    message: {error: "Too many registration tries, try again shortly"},
     skipSuccessfulRequests: false,
     skip: (req) => req.ip === '127.0.0.1'
     
@@ -14,11 +14,30 @@ export const registerLimit = rateLimit({
 
 export const loginLimit = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 10,
+    max: 5,
     standardHeaders: true,
     legacyHeaders: false,
     message: {error: "Too many unsuccessful login tries, try again shortly"},
     skipSuccessfulRequests: true,
-    keyGenerator: (req: Request) => String(req.body?.email ?? '').toLowerCase().trim() || "unknown",
+    skip: (req) => req.ip === '127.0.0.1'
+})
+
+export const getLimit = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 300,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {error: "Timed out"},
+    skipSuccessfulRequests: true,
+    skip: (req) => req.ip === '127.0.0.1'
+})
+
+export const crudeLimit = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 60,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {error: "Timed out"},
+    skipSuccessfulRequests: true,
     skip: (req) => req.ip === '127.0.0.1'
 })
