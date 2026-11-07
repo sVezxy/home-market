@@ -16,7 +16,7 @@ export const deleteListing = async (req: Request<{id: string}>, res: Response) =
         if(!listing){
             return res.status(404).json({error: "Requested listing is not found"})
         }
-        if(listing.status !== "ACTIVE"){
+        if(listing.status !== "ACTIVE" || "PENDING"){
             return res.status(404).json({ error: http.STATUS_CODES[404]});
         }
         if(listing?.ownerId !== req.user!.userId){
@@ -32,11 +32,11 @@ export const deleteListing = async (req: Request<{id: string}>, res: Response) =
             },
         });
         if(!deletedListing){
-            res.status(404).json({error: http.STATUS_CODES[404]})
+            return res.status(404).json({error: http.STATUS_CODES[404]})
         }
-        res.status(200).json(deletedListing);
+        return res.status(200).json(deletedListing);
     }catch(error){
         console.log(error);
-        res.status(500).json({error: http.STATUS_CODES[500]})
+        return res.status(500).json({error: http.STATUS_CODES[500]})
     }
 }

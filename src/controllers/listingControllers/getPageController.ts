@@ -43,7 +43,7 @@ export const getPage = async (req: Request, res: Response) =>{
                 include:{
                     Category: true,
                     User: {select:{
-                        id:true, name:true, email:true,
+                        id:true, name:true,
                     }}
                 }
             }),
