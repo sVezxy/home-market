@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { zodValidation } from "../middleware/zodValidationMiddleware";
-import { registerLimit } from "../middleware/rateLimit";
+import { loginLimit, registerLimit } from "../middleware/rateLimit";
 import { regController } from "../controllers/userControllers/regController";
 import { regSchema } from "../schemas/userSchemas/regSchemas";
 import { loginScheme } from "../schemas/userSchemas/loginSchemas";
@@ -15,7 +15,7 @@ import { getProfileById } from "../controllers/userControllers/getProfileById";
 const userRouter = Router();
 
 userRouter.post("/register", registerLimit , zodValidation(regSchema), regController);
-userRouter.post("/login", registerLimit, zodValidation(loginScheme), loginController);
+userRouter.post("/login", loginLimit, zodValidation(loginScheme), loginController);
 userRouter.get("/me", authMiddleware, (req, res) =>{
     return res.status(201).json({message: "You are authorised", user: req.user});
 });

@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import http from 'http'
 import { prisma } from "../../prisma";
 
-export const getListing = async (req: Request<{ id: string }>, res: Response) =>{
+export const getListingById = async (req: Request<{ id: string }>, res: Response) =>{
     try{
         const {id} = req.params;
         const listing = await prisma.listing.findUnique({

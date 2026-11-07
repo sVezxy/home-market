@@ -1,10 +1,12 @@
-import express, { Router } from 'express'
+import express from 'express'
+import helmet from 'helmet';
 import userRouter from './routers/userRouter';
 import listingRouter from './routers/listingRouter';
 import 'dotenv/config';
 
 const app = express();
 
+app.use(helmet());
 app.use(express.json({limit: "10kb"}));
 
 app.use("/user", userRouter);

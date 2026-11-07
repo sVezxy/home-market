@@ -1,5 +1,4 @@
 import { uuid, z } from 'zod';
-import { constantCatch } from 'zod/v4/core/util.cjs';
 
 const photoUrlSchema = z
   .string()
@@ -107,7 +106,7 @@ export const listingSchema = z.strictObject({
   }
 });
 
-export const ListingsQuerySchema = z.object({
+export const ListingsQuerySchema = z.strictObject({
   page: z.coerce.number().int()
   .min(1)
   .default(1),
@@ -121,11 +120,11 @@ export const ListingsQuerySchema = z.object({
   maxPrice: z.coerce.number().positive().optional()
 });
 
-export const listingsParamSchema = z.object({
+export const listingsParamSchema = z.strictObject({
   id: z.string().uuid("Invalid uuid"),
 });
 
-export const updateListingSchema = z.object({
+export const updateListingSchema = z.strictObject({
   name: z.string().trim().min(5).max(100).optional(),
   description: z.string().trim().min(20).max(500).optional(),
   price: z.number().int().positive().max(1000000).optional(),

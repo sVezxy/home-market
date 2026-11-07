@@ -1,6 +1,6 @@
 import { custom, z } from 'zod'
 
-export const regSchema = z.object({
+export const regSchema = z.strictObject({
     name: z.string({
         error: (issue) => issue.input === undefined ? "Required field" : "Invalid"
     }),
