@@ -1,12 +1,15 @@
 import { Request, Response } from "express";
 import http from 'http'
 import { prisma } from "../../prisma";
+import { z } from "zod";
+import { ListingsQuerySchema } from "../../schemas/listingSchemas/listingSchemas";
+type ListingsQuery = z.infer<typeof ListingsQuerySchema>
 
 export const getPage = async (req: Request, res: Response) =>{
     try{
-        const { page, limit, search, minPrice, maxPrice}  = req.query as unknown as {page:number,limit:number,search?:string,minPrice?:number,maxPrice?:number};
-        const take = Number(limit);
-        const skip = Number((page - 1) * limit);
+        const { page, limit, search, categoryId, minPrice, maxPrice}  = req.validateQuery as ListingsQuery;
+        const take = limit;
+        const skip = (page - 1) * limit;
         const whereCond: any = {
             status: "ACTIVE"
         } 
@@ -17,6 +20,9 @@ export const getPage = async (req: Request, res: Response) =>{
                 { name:{contains: search, mode: "insensitive"}},
                 { street:{contains: search, mode: "insensitive"}}
             ]
+        }
+        if(categoryId){
+            whereCond.categoryId = categoryId;
         }
         if(minPrice !== undefined || maxPrice !== undefined){
             if(minPrice !== undefined && maxPrice !== undefined && Number(minPrice) > Number(maxPrice)){

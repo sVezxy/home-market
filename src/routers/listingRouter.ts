@@ -7,12 +7,13 @@ import { getListingById } from "../controllers/listingControllers/getListingCont
 import { createListings } from "../controllers/listingControllers/createListingController";
 import { deleteListing } from "../controllers/listingControllers/deleteListingController";
 import { updateListing } from "../controllers/listingControllers/updateListingController";
-
+import { requireRole } from "../middleware/authRoleMiddleware";
+import { crudeLimit, getLimit, } from "../middleware/rateLimit";
 const listingRouter = Router();
 
-listingRouter.get("/", zodValidation(ListingsQuerySchema, "query"), getPage);
-listingRouter.post("/create-product", authMiddleware, zodValidation(listingSchema), createListings);
-listingRouter.get("/:id", zodValidation(listingsParamSchema, "params"), getListingById);
-listingRouter.delete("/:id", authMiddleware, zodValidation(listingsParamSchema, "params"), deleteListing)
-listingRouter.patch("/:id", authMiddleware, zodValidation(updateListingSchema, "body"), zodValidation(listingsParamSchema, "params"), updateListing)
+listingRouter.get("/", getLimit, zodValidation(ListingsQuerySchema, "query"), getPage);
+listingRouter.post("/create-product", crudeLimit, authMiddleware, requireRole("ADMIN"), zodValidation(listingSchema), createListings);
+listingRouter.get("/:id", getLimit, zodValidation(listingsParamSchema, "params"), getListing);
+listingRouter.delete("/:id", crudeLimit, authMiddleware, zodValidation(listingsParamSchema, "params"), deleteListing)
+listingRouter.patch("/:id", crudeLimit, authMiddleware, zodValidation(updateListingSchema, "body"), zodValidation(listingsParamSchema, "params"), updateListing)
 export default listingRouter;
