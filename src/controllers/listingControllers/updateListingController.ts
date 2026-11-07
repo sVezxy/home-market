@@ -33,11 +33,11 @@ export const updateListing = async (req: Request<{id: string}>, res: Response) =
             }               
         });
         if(!updatedData){
-            res.status(404).json({error: http.STATUS_CODES[404]})
+            return res.status(404).json({error: http.STATUS_CODES[404]})
         }
-        res.status(200).json(updatedData);
+        return res.status(200).json(updatedData);
     }catch(error){
         console.log(error);
-        res.status(500).json({error: http.STATUS_CODES[500]})
+        return res.status(500).json({error: http.STATUS_CODES[500]})
     }
 }

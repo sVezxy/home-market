@@ -1,9 +1,8 @@
-import express from 'express'
-import helmet from 'helmet';
+import 'dotenv/config';
+import express, { Router } from 'express'
 import userRouter from './routers/userRouter';
 import listingRouter from './routers/listingRouter';
 import helmet from "helmet";
-import 'dotenv/config';
 
 const app = express();
 app.use(helmet()); 

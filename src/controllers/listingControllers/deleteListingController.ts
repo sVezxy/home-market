@@ -16,7 +16,7 @@ export const deleteListing = async (req: Request<{id: string}>, res: Response) =
         if(!listing){
             return res.status(404).json({error: "Requested listing is not found"})
         }
-        if(listing.status !== "ACTIVE"){
+        if(listing.status !== "ACTIVE" || "PENDING"){
             return res.status(404).json({ error: http.STATUS_CODES[404]});
         }
         if(listing?.ownerId !== req.user!.userId){

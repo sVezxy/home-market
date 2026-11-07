@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { zodValidation } from "../middleware/zodValidationMiddleware";
-import { loginLimit, registerLimit } from "../middleware/rateLimit";
+import { registerLimit, loginLimit } from "../middleware/rateLimit";
 import { regController } from "../controllers/userControllers/regController";
 import { regSchema } from "../schemas/userSchemas/regSchemas";
 import { loginScheme } from "../schemas/userSchemas/loginSchemas";

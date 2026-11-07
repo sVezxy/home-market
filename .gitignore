@@ -5,4 +5,4 @@ node_modules/
 /prisma/migrations
 /src/generated/prisma
 tsconfig.json
-package-lock.json
+client/

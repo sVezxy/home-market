@@ -12,7 +12,7 @@ import { crudeLimit, getLimit, } from "../middleware/rateLimit";
 const listingRouter = Router();
 
 listingRouter.get("/", getLimit, zodValidation(ListingsQuerySchema, "query"), getPage);
-listingRouter.post("/create-product", crudeLimit, authMiddleware, requireRole("ADMIN"), zodValidation(listingSchema), createListings);
+listingRouter.post("/create-product", crudeLimit, authMiddleware, requireRole("USER", "ADMIN"), zodValidation(listingSchema), createListings);
 listingRouter.get("/:id", getLimit, zodValidation(listingsParamSchema, "params"), getListing);
 listingRouter.delete("/:id", crudeLimit, authMiddleware, zodValidation(listingsParamSchema, "params"), deleteListing)
 listingRouter.patch("/:id", crudeLimit, authMiddleware, zodValidation(updateListingSchema, "body"), zodValidation(listingsParamSchema, "params"), updateListing)

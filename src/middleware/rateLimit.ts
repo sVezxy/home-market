@@ -28,7 +28,7 @@ export const getLimit = rateLimit({
     standardHeaders: true,
     legacyHeaders: false,
     message: {error: "Timed out"},
-    skipSuccessfulRequests: true,
+    skipSuccessfulRequests: false,
     skip: (req) => req.ip === '127.0.0.1'
 })
 
@@ -38,6 +38,6 @@ export const crudeLimit = rateLimit({
     standardHeaders: true,
     legacyHeaders: false,
     message: {error: "Timed out"},
-    skipSuccessfulRequests: true,
+    skipSuccessfulRequests: false,
     skip: (req) => req.ip === '127.0.0.1'
 })
