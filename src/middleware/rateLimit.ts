@@ -41,3 +41,13 @@ export const crudeLimit = rateLimit({
     skipSuccessfulRequests: false,
     skip: (req) => req.ip === '127.0.0.1'
 })
+
+export const uploadLimit = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 15,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: "Too many upload requests, try again later" },
+    skipSuccessfulRequests: false,
+    skip: (req) => req.ip === '127.0.0.1'
+});
