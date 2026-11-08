@@ -24,7 +24,8 @@ export const createListings = async (req: Request, res: Response) => {
         const newListing = await prisma.listing.create({
             data: {
                 ...req.body,
-                ownerId: authorId
+                ownerId: authorId,
+                status: "ACTIVE",
             },
             include: {
                 Category: {

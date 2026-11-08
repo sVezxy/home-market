@@ -125,9 +125,16 @@ export const listingsParamSchema = z.object({
 });
 
 export const updateListingSchema = z.object({
+  categoryId: z.string().uuid("Invalid category ID format").optional(),
   name: z.string().trim().min(5).max(100).optional(),
   description: z.string().trim().min(20).max(500).optional(),
   price: z.number().int().positive().max(1000000).optional(),
+  deposit: z.boolean(),
+  depositAmount: z.number().int("Deposit amount must be an integer")
+    .nonnegative("Deposit amount cannot be negative")
+    .max(1000000, "Deposit amount exceeds the maximum allowed value")
+    .optional()
+    .nullable(),
   street: z.string().trim().min(2).max(100).optional(),
   streetNumber: z.string().trim().min(1).max(20).optional(),
   amenities: z.array(z.string()).optional(),
