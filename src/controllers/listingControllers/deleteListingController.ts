@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import http from 'http'
 import { prisma } from "../../prisma";
+import { Status } from "@prisma/client";
+
+// Owner may remove a listing only while it is on moderation or published
+const DELETABLE_STATUSES: Status[] = ["ACTIVE", "PENDING"];
 
 export const deleteListing = async (req: Request<{id: string}>, res: Response) => {
     try{
@@ -16,7 +20,7 @@ export const deleteListing = async (req: Request<{id: string}>, res: Response) =
         if(!listing){
             return res.status(404).json({error: "Requested listing is not found"})
         }
-        if(listing.status !== "ACTIVE" || "PENDING"){
+        if(!DELETABLE_STATUSES.includes(listing.status) || listing.deletedAt){
             return res.status(404).json({ error: http.STATUS_CODES[404]});
         }
         if(listing?.ownerId !== req.user!.userId){

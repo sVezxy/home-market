@@ -1,6 +1,13 @@
 import { rateLimit, ipKeyGenerator } from "express-rate-limit";
 import { Request } from "express";
 
+// Localhost is exempt from rate limiting only in development.
+// In production every client is limited (requests come through the Next.js proxy,
+// so the real IP is taken from X-Forwarded-For via "trust proxy" in index.ts).
+const LOCAL_IPS = new Set(["127.0.0.1", "::1", "::ffff:127.0.0.1"]);
+const isDev = process.env.NODE_ENV !== "production";
+const skipLocalInDev = (req: Request) => isDev && LOCAL_IPS.has(req.ip ?? "");
+
 export const registerLimit = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 10,
@@ -8,7 +15,7 @@ export const registerLimit = rateLimit({
     legacyHeaders: false,
     message: {error: "Too many registration tries, try again shortly"},
     skipSuccessfulRequests: false,
-    skip: (req) => req.ip === '127.0.0.1'
+    skip: skipLocalInDev
     
 })
 
@@ -19,7 +26,7 @@ export const loginLimit = rateLimit({
     legacyHeaders: false,
     message: {error: "Too many unsuccessful login tries, try again shortly"},
     skipSuccessfulRequests: true,
-    skip: (req) => req.ip === '127.0.0.1'
+    skip: skipLocalInDev
 })
 
 export const getLimit = rateLimit({
@@ -29,7 +36,7 @@ export const getLimit = rateLimit({
     legacyHeaders: false,
     message: {error: "Timed out"},
     skipSuccessfulRequests: false,
-    skip: (req) => req.ip === '127.0.0.1'
+    skip: skipLocalInDev
 })
 
 export const crudeLimit = rateLimit({
@@ -39,7 +46,7 @@ export const crudeLimit = rateLimit({
     legacyHeaders: false,
     message: {error: "Timed out"},
     skipSuccessfulRequests: false,
-    skip: (req) => req.ip === '127.0.0.1'
+    skip: skipLocalInDev
 })
 
 export const uploadLimit = rateLimit({
@@ -49,5 +56,5 @@ export const uploadLimit = rateLimit({
     legacyHeaders: false,
     message: { error: "Too many upload requests, try again later" },
     skipSuccessfulRequests: false,
-    skip: (req) => req.ip === '127.0.0.1'
+    skip: skipLocalInDev
 });

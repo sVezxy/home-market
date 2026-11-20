@@ -19,7 +19,9 @@ const coordinatesSchema = (name: string, limit: number) => {
     .max(limit, `${name} must be between -${limit} and ${limit}`)
 }
 
-export const listingSchema = z.strictObject({
+// Base shape shared by create and update; refinements are added separately,
+// because Zod v4 does not allow .partial() on a schema that already has refinements.
+const listingBaseSchema = z.strictObject({
   categoryId: z.string().uuid("Invalid category ID format"),
 
   name: z.string()
@@ -80,6 +82,7 @@ export const listingSchema = z.strictObject({
 
   area: z.number()
   .int("Must be an integer")
+  .positive("Area must be greater than zero")
   .max(1000),
 
   photos: z.array(photoUrlSchema)
@@ -88,23 +91,29 @@ export const listingSchema = z.strictObject({
       message: "Photos must not contain duplicates",
     }),
 
-}).superRefine((data, ctx) => {
-  if (data.deposit && (!data.depositAmount || data.depositAmount <= 0)) {
+});
+
+type DepositFields = { deposit?: boolean; depositAmount?: number | null };
+
+const depositRefine = (data: DepositFields, ctx: z.RefinementCtx) => {
+  if (data.deposit === true && (!data.depositAmount || data.depositAmount <= 0)) {
     ctx.addIssue({
-      code: z.ZodIssueCode.custom,
+      code: "custom",
       message: "Deposit amount is required and must be greater than 0 when deposit is true",
       path: ["depositAmount"],
     });
   }
 
-  if (!data.deposit && data.depositAmount && data.depositAmount > 0) {
+  if (data.deposit === false && data.depositAmount && data.depositAmount > 0) {
     ctx.addIssue({
-      code: z.ZodIssueCode.custom,
+      code: "custom",
       message: "Deposit amount must be empty or 0 when deposit is false",
       path: ["depositAmount"],
     });
   }
-});
+};
+
+export const listingSchema = listingBaseSchema.superRefine(depositRefine);
 
 export const ListingsQuerySchema = z.object({
   page: z.coerce.number().int()
@@ -114,7 +123,7 @@ export const ListingsQuerySchema = z.object({
   .min(1)
   .max(50)
   .default(10),
-  search: z.string().optional(),
+  search: z.string().trim().max(100).optional(),
   categoryId: z.string().uuid().optional(),
   minPrice: z.coerce.number().nonnegative().optional(),
   maxPrice: z.coerce.number().positive().optional()
@@ -124,24 +133,11 @@ export const listingsParamSchema = z.object({
   id: z.string().uuid("Invalid uuid"),
 });
 
-export const updateListingSchema = z.object({
-  categoryId: z.string().uuid("Invalid category ID format").optional(),
-  name: z.string().trim().min(5).max(100).optional(),
-  description: z.string().trim().min(20).max(500).optional(),
-  price: z.number().int().positive().max(1000000).optional(),
-  deposit: z.boolean(),
-  depositAmount: z.number().int("Deposit amount must be an integer")
-    .nonnegative("Deposit amount cannot be negative")
-    .max(1000000, "Deposit amount exceeds the maximum allowed value")
-    .optional()
-    .nullable(),
-  street: z.string().trim().min(2).max(100).optional(),
-  streetNumber: z.string().trim().min(1).max(20).optional(),
-  amenities: z.array(z.string()).optional(),
-  isShared: z.boolean().optional(),
-  countPeople: z.number().int().min(1).max(15).optional(),
-  countRoom: z.number().int().min(1).max(10).optional(),
-  allowedGender: z.enum(["ANY", "ONLY_MALE", "ONLY_FEMALE"]).optional(),
-  area: z.number().max(1000).optional(),
-  photos: z.array(z.string().url()).optional()
+// Same rules as creation, but every field is optional (partial update)
+export const updateListingSchema = listingBaseSchema.partial().superRefine(depositRefine);
+
+export const listingStatusSchema = z.strictObject({
+  status: z.enum(["ACTIVE", "BANNED"], {
+    message: "Invalid status. Allowed values: ACTIVE, BANNED",
+  }),
 });

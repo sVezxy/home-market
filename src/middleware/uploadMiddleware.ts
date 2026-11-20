@@ -1,8 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import multer, { MulterError } from "multer";
+import http from "http";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 const MAX_FILES_COUNT = 10;
+const MAX_REQUEST_SIZE = MAX_FILES_COUNT * MAX_FILE_SIZE + 1024 * 1024; // all files + 1 MB for multipart boundaries/headers
 const ALLOWED_MIME_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 class UnsupportedFileTypeError extends Error {
@@ -17,7 +19,7 @@ const hasImageSignature = (buf: Buffer): boolean => {
 
   const isJpeg = buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff;
   const isPng =
-    buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47;
+    buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47 && buf[4] === 0x0D && buf[5] === 0x0A && buf[6] === 0x1A && buf[7] === 0x0A;
   const isWebp =
     buf.subarray(0, 4).toString("ascii") === "RIFF" &&
     buf.subarray(8, 12).toString("ascii") === "WEBP";
@@ -47,6 +49,14 @@ export const uploadPhotosMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
+  if(!req.is("multipart/form-data")){
+    return res.status(415).json({error: http.STATUS_CODES[415]})
+  }
+  const contentLength = Number(req.headers["content-length"]);
+  if(contentLength > MAX_REQUEST_SIZE){
+    return res.status(413).json({error: http.STATUS_CODES[413]})
+  }
+
   upload(req, res, (err: unknown) => {
     if (err instanceof MulterError) {
       switch (err.code) {

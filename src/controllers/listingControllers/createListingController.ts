@@ -25,7 +25,6 @@ export const createListings = async (req: Request, res: Response) => {
             data: {
                 ...req.body,
                 ownerId: authorId,
-                status: "ACTIVE",
             },
             include: {
                 Category: {
